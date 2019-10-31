@@ -1,8 +1,8 @@
 <?php
-$host = 'db1';
-$user = 'root';
-$password = 'root';
-$db = 'db1';
+$host = 'db1'; #database container name
+$user = 'root'; #user name
+$password = 'root'; #user password
+$db = 'instance'; #database instance of the server
 
 $conn = new mysqli($host,$user,$password,$db);
 if($conn->connect_error){
