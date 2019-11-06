@@ -1,59 +1,62 @@
 version: '3.3'
-services:
-  web1:
+services:   
+  lena:
     build:
-      context: ./web1
+      context: ./lena
       dockerfile: Dockerfile
-    container_name: web1
+    container_name: lena
     depends_on:
-      - db1
+      - lenaDB
     volumes:
-      - ./web1:/var/www/html/
+      - ./lena:/var/www/html/
+    expose:
+      - 80
+    environment:
+      VIRTUAL_HOST: lena.upf.edu
+
+  wordpress:
+    build:
+      context: ./wordpress
+      dockerfile: Dockerfile
+    container_name: wordpress
+    depends_on:
+      - wordpressDB
+    volumes:
+      - ./wordpress:/var/www/html/
     expose:
       - 80
     environment:
       VIRTUAL_HOST: web1.com
- 
-  web2:
-    build:
-      context: ./web1
-      dockerfile: Dockerfile
-    container_name: web2
-    depends_on:
-      - db2
-    volumes:
-      - ./web2:/var/www/html/
-    expose:
-      - 80
-    environment:
-      VIRTUAL_HOST: web2.com
 
 
-  db1:
-    container_name: db1
+
+  lenaDB:
+    container_name: lenaDB
     image: mysql:latest
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db1
+      MYSQL_DATABASE: lenaDB
       MYSQL_USER: root
       MYSQL_PASSWORD: root
+    volumes:
+      - ./lenaDB:/home/   
 
-  db2:
-    container_name: db2
+  wordpressDB:
+    container_name: wordpressDB
     image: mysql:latest
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: db2 
+      MYSQL_DATABASE: wordpressDB
       MYSQL_USER: root
       MYSQL_PASSWORD: root
 
 volumes:
-  db1:
-  db2:
+  lenaDB:
+  wordpressDB:
 
 networks:
   default:
