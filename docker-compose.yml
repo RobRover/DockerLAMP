@@ -22,7 +22,7 @@ services:
     depends_on:
       - wordpressDB
     volumes:
-      - ./wordpress:/var/www/html/
+      - ./wordpress:/var/www/html/ 
     expose:
       - 80
     environment:
@@ -53,6 +53,8 @@ services:
       MYSQL_DATABASE: wordpressDB
       MYSQL_USER: root
       MYSQL_PASSWORD: root
+    volumes:
+      - ./wordpress/lena.dump.191030-0100:/docker-entrypoint-initdb.d/lena.dump.191030-0100
 
 volumes:
   lenaDB:
