@@ -5,14 +5,14 @@ services:
       context: ./lena
       dockerfile: Dockerfile
     container_name: lena
-    depends_on:
-      - lenaDB
     volumes:
-      - ./lena:/var/www/html/
+      - "NFSLena:/var/www/html/"
     expose:
       - 80
     environment:
       VIRTUAL_HOST: lena.upf.edu
+    extra_hosts:
+      - "dockerhost:192.168.1.1"
 
   wordpress:
     build:
@@ -30,18 +30,18 @@ services:
 
 
 
-  lenaDB:
-    container_name: lenaDB
-    image: mysql:latest
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: lenaDB
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-    volumes:
-      - ./lenaDB:/home/   
+#  lenaDB:
+#    container_name: lenaDB
+#    image: mysql:latest
+#    command: --default-authentication-plugin=mysql_native_password
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: lenaDB
+#      MYSQL_USER: root
+#      MYSQL_PASSWORD: root
+#    volumes:
+#      - ./lenaDB:/home/   
 
   wordpressDB:
     container_name: wordpressDB
@@ -54,9 +54,15 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: root
     volumes:
-      - ./wordpress/lena.dump.191030-0100:/docker-entrypoint-initdb.d/lena.dump.191030-0100
+      - ./wordpress/:/home/
 
 volumes:
+  NFSLena:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.1
+      device: ":/mnt/lena"
   lenaDB:
   wordpressDB:
 
