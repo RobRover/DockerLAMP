@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 services:   
   lena:
     build:
@@ -14,47 +14,6 @@ services:
     extra_hosts:
       - "dockerhost:192.168.1.1"
 
-  wordpress:
-    build:
-      context: ./wordpress
-      dockerfile: Dockerfile
-    container_name: wordpress
-    depends_on:
-      - wordpressDB
-    volumes:
-      - ./wordpress:/var/www/html/ 
-    expose:
-      - 80
-    environment:
-      VIRTUAL_HOST: web1.com
-
-
-
-#  lenaDB:
-#    container_name: lenaDB
-#    image: mysql:latest
-#    command: --default-authentication-plugin=mysql_native_password
-#    restart: always
-#    environment:
-#      MYSQL_ROOT_PASSWORD: root
-#      MYSQL_DATABASE: lenaDB
-#      MYSQL_USER: root
-#      MYSQL_PASSWORD: root
-#    volumes:
-#      - ./lenaDB:/home/   
-
-  wordpressDB:
-    container_name: wordpressDB
-    image: mysql:latest
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: wordpressDB
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-    volumes:
-      - ./wordpress/:/home/
 
 volumes:
   NFSLena:
@@ -63,8 +22,7 @@ volumes:
       type: nfs
       o: addr=192.168.1.1
       device: ":/mnt/lena"
-  lenaDB:
-  wordpressDB:
+
 
 networks:
   default:
