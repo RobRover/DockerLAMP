@@ -13,6 +13,14 @@ services:
       VIRTUAL_HOST: lena.upf.edu
     extra_hosts:
       - "dockerhost:192.168.1.1"
+  #Network Container
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
 
 
 volumes:
