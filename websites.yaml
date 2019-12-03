@@ -1,0 +1,30 @@
+version: '3.5'
+
+services:  
+  lena:
+    image: rgarciat/web_hosting:apatx-php
+    networks:
+      - traefik-public
+    deploy:
+      mode: global
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.lena.rule=Host(`lena.upf.edu`)"
+        - "traefik.http.routers.lena.entrypoints=web"
+        - "traefik.http.services.lena.loadbalancer.server.port=80"
+    volumes:
+      - "NFSLena:/var/www/html/"
+    extra_hosts:
+      - "dockerhost:192.168.1.1"
+
+volumes:
+  NFSLena:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.1
+      device: ":/mnt/lena"
+
+networks:
+  traefik-public:
+    external: true

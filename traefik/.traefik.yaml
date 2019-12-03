@@ -1,0 +1,41 @@
+version: '3.5'
+
+services:   
+  lena:
+    build:
+      context: ./lena
+      dockerfile: Dockerfile
+    volumes:
+      - "NFSLena:/var/www/html/"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.lena.rule=Host(`lena.upf.edu`)"
+      - "traefik.http.routers.lena.entrypoints=web"
+    extra_hosts:
+      - "dockerhost:192.168.1.1"
+
+  #Reverse proxy network Container
+  reverse-proxy:
+    image: traefik:v2.0.2
+    command:
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.swarmMode=true"
+      #only expose container that are explicitly enabled (using label traefik.enabled)
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=traefik-public"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - traefik-public
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  traefik-public:
+    external: true
