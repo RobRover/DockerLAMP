@@ -6,7 +6,7 @@ services:
     networks:
       - traefik-public
     deploy:
-      mode: global
+      replicas: 3
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.lena.rule=Host(`lena.upf.edu`)"
@@ -17,6 +17,23 @@ services:
     extra_hosts:
       - "dockerhost:192.168.1.1"
 
+  web1:
+    image: rgarciat/web_hosting:apatx-php
+    networks:
+      - traefik-public
+    deploy:
+      replicas: 3
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.web1.rule=Host(`web1.com`)"
+        - "traefik.http.routers.web1.entrypoints=web"
+        - "traefik.http.services.web1.loadbalancer.server.port=80"
+    volumes:
+      - "NFSWeb1:/var/www/html/"
+    extra_hosts:
+      - "web1host:192.168.1.1"
+
+#NFS volumes
 volumes:
   NFSLena:
     driver: local
@@ -24,7 +41,14 @@ volumes:
       type: nfs
       o: addr=192.168.1.1
       device: ":/mnt/lena"
+  NFSWeb1:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.1.1
+      device: ":/mnt/web1"
 
+#traefik network
 networks:
   traefik-public:
     external: true

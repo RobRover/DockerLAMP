@@ -1,22 +1,26 @@
-version: '3'
+version: '3.5'
 
 services:
   reverse-proxy:
     image: traefik:v2.0.2
     command:
-      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--entrypoints.web.address=:80"
       - "--providers.docker.swarmMode=true"
+      - --api.insecure #enable traefik UI
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.network=traefik-public"
-      - "--entrypoints.web.address=:80"
     ports:
-      - 80:80
+      - "80:80"
+      #traefik UI dashboard
+      - "8080:8080"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - traefik-public
     deploy:
+      mode: global
       placement:
         constraints:
           - node.role == manager
