@@ -6,7 +6,7 @@ services:
     networks:
       - traefik-public
     deploy:
-      replicas: 3
+      mode: global
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.lena.rule=Host(`lena.upf.edu`)"
@@ -22,7 +22,7 @@ services:
     networks:
       - traefik-public
     deploy:
-      replicas: 3
+      mode: global
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.web1.rule=Host(`web1.com`)"
